@@ -1,64 +1,98 @@
 #include <iostream>
+#include <sstream>
 #include <limits>
 
 #include "Listas.hpp"
 
-Casilla lee_casilla (std::istream& in,std::ostream& out);
+bool lee_casilla (Casilla &c);
+void limpia_teclado();
 
 int main()
 {
-    std::cout<<"Introduzca la casilla inicial\n";
-    Casilla inicial=lee_casilla(std::cin,std::cout);
-    std::cout<<"\nIntroduzca el tablero casilla a casilla, introduzca la inicial para finalizar\n";
-    Lista<Casilla>tablero;
-    while (true)
-    {
-        Casilla casilla=lee_casilla(std::cin,std::cout);
-        if (casilla==inicial)
-            break;
-        else
-            tablero.get().push_back(casilla);
-    }
+    Casilla input;//Entrada de teclado
+    Casilla entrada;
+    Lista<Casilla> tablero;
 
-    std::cout<<"\nCaminos posibles\n"<<caballos(Lista<Casilla>({inicial})+tablero)<<'\n';
+    for (;;)
+    {
+        //Leer la primera posición
+        std::cout<<"Introduzca la casilla del caballo\n";
+        for (;;)
+        {
+            std::cout<<"\nEntrada: ";
+            if (lee_casilla(input))
+            {
+                //Problema al leer
+                std::cout<<"\nERROR al leer la entrada inicial, ¿reintentar[S/N]?: ";
+                char rein;
+                std::cin>>rein;
+                if(rein=='n'||rein=='N')
+                    return 0;
+            }
+            else
+            {
+                //Se leyo la entrada
+                entrada=input;
+                break;
+            }
+        }
+
+        //Leer las casillas del tablero
+        int val=1;
+        std::cout<<"\nIntroduzca las casillas del teclado, enter para salir\n";
+        for(;;)
+        {
+            std::cout<<'['<<val<<']'<<">: ";
+            //Leer una posición
+            if (lee_casilla(input))
+            {
+                //Problema al leer
+                std::cout<<"\nERROR al leer la casilla, ¿procesar los datos?[S/N]?: ";
+                char rein;
+                std::cin>>rein;
+                if(!(rein=='n'||rein=='N'))
+                    break;
+            }
+            else
+            {
+                //Se leyo la entrada
+                tablero.get().push_back(input);
+                ++val;
+                break;
+            }
+        }
+
+        std::cout<<"\nDatos\n";
+        std::cout<<"Caballo: "<<entrada<<'\n';
+        std::cout<<"Tablero: \n"<<tablero<<'\n';
+        std::cout<<"Salida:\n";
+        std::cout<<caballos(Lista<Casilla>({entrada})+tablero)<<"\n";
+    }
 
     return 0;
 }
 
-Casilla lee_casilla (std::istream& in,std::ostream& out)
+void limpia_teclado()
 {
-    static int casillas=0;
-    int valores=0;
-    int x,y,buff;
-    while(true)
-    {
-        out<<casillas<<" : ";
-        bool read=true;
-        while(read&&in>>buff)
-        {
-            switch(++valores)
-            {
-                case 1:
-                    x=buff;
-                    break;
-                case 2:
-                    y=buff;
-                    read=false;
-                    break;
-            }
-        }
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
 
-        if (read)
-        {
-            out<<"ERROR, Introduzca otra vez\n";
-            valores=0;
-            in.clear();
-            in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        }
-        else
-        {
-            ++casillas;
-            return Casilla(x,y);
-        }
+bool lee_casilla (Casilla &c)
+{
+    int x,y;//Posiciones a leer
+    std::string cadena_entrada;
+    std::getline(std::cin,cadena_entrada);
+    if (cadena_entrada.empty())
+        return false;
+    std::istringstream stream_entrada(cadena_entrada);
+    if (stream_entrada>>x>>y)//Intenta leer y comprueba si se produjo algún error
+    {
+        //No hubo error
+        c.set_x(x);
+        c.set_y(y);
+        return false;
     }
+    else
+        return true;
 }

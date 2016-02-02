@@ -152,7 +152,7 @@ class Casilla
             return (diff_x==2&&diff_y==1)||(diff_x==1&&diff_y==2);
         }
 
-        //Get
+        //Get/set
 
         int get_x() const
         {
@@ -162,6 +162,16 @@ class Casilla
         int get_y() const
         {
             return y;
+        }
+
+        void set_x(int nx)
+        {
+            x=nx;
+        }
+
+        void set_y(int ny)
+        {
+            y=ny;
         }
 
         //Igualdad/desigualdad
