@@ -5,6 +5,6 @@ using namespace std;
 
 int main()
 {
-    std::cout<<Lista<Casilla>({Casilla(2,4),Casilla(3,1),Casilla(1,2),Casilla(4,3)});
+    std::cout<<Lista<Casilla>({Casilla(0,0),Casilla(2,-1),Casilla(2,1),Casilla(4,0)});
     return 0;
 }
