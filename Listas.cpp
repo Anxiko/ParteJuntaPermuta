@@ -24,7 +24,10 @@ Lista<Lista<Casilla>> caballos(const Lista<Casilla> &lc)
 {
     Lista<Casilla> head; head.get().push_back(lc.head());//Obtén la posición del caballo
     Lista<Lista<Casilla>> rv;//Valor de retorno
-    for (const Lista<Casilla>& l : lc.tail().permutar().get_const())//Todos los posibles caminos
+
+    const auto& caminos=lc.tail().permutar();//Obtén todos los posibles caminos
+
+    for (const Lista<Casilla>& l : caminos.get_const())//Todos los posibles caminos
     {
         if (valido(head+l))//Si el camino es válido
             rv.get().push_back(head+l);//Añádelo

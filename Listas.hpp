@@ -7,6 +7,8 @@
 
 #include <cstdlib>//abs
 
+#include <iostream>//Salida a pantalla
+
 template<typename T>
 class Lista//Lista de elementos de tipo T
 {
@@ -160,6 +162,18 @@ class Casilla
         int get_y() const
         {
             return y;
+        }
+
+        //Igualdad/desigualdad
+
+        bool operator==(const Casilla& c)
+        {
+            return x==c.x&&y==c.y;
+        }
+
+        bool operator!=(const Casilla &c)
+        {
+            return !(operator==(c));
         }
 };
 
