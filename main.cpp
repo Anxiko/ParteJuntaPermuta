@@ -5,7 +5,6 @@ using namespace std;
 
 int main()
 {
-    std::cout<<(Lista<int>({1,2,3}).permutar());
-
+    std::cout<<Lista<Casilla>({Casilla(2,4),Casilla(3,1),Casilla(1,2),Casilla(4,3)});
     return 0;
 }

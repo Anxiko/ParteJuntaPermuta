@@ -1,6 +1,11 @@
-#include <vector>
+#ifndef _LISTAS_
+#define _LISTAS_
 
-#include <ostream>
+#include <vector>//Vectores
+
+#include <ostream>//Streams de salida
+
+#include <cstdlib>//abs
 
 template<typename T>
 class Lista//Lista de elementos de tipo T
@@ -115,6 +120,49 @@ class Lista//Lista de elementos de tipo T
         }
 };
 
+class Casilla
+{
+    //Atributos
+    private:
+
+        int x,y;
+
+    //Constructores
+    public:
+
+        Casilla() = default;
+
+        Casilla(int ix,int iy)
+        :x(ix),y(iy)
+        {}
+
+        Casilla(const Casilla&) = default;
+
+        Casilla& operator= (const Casilla&) = default;
+
+    //Métodos
+    public:
+
+        //Verifica si el salto entre dos casilla es válido
+        bool salto(const Casilla& nc) const
+        {
+            unsigned int diff_x=std::abs(x-nc.x),diff_y=std::abs(y-nc.y);
+            return (diff_x==2&&diff_y==1)||(diff_x==1&&diff_y==2);
+        }
+
+        //Get
+
+        int get_x() const
+        {
+            return x;
+        }
+
+        int get_y() const
+        {
+            return y;
+        }
+};
+
 //Imprime la lista
 template<typename T>
 std::ostream& operator<<(std::ostream &os, const Lista<T>& l)
@@ -132,3 +180,16 @@ std::ostream& operator<<(std::ostream &os, const Lista<T>& l)
     os<<']';
     return os;
 }
+
+//Imprime una casilla
+std::ostream& operator<<(std::ostream &os, const Casilla& c);
+
+//Funciones auxiliares
+
+//Comprueba si un camino válido es dado
+bool valido(const Lista<Casilla>& lc);
+
+//Dada la posición de un caballo (primer elemento del array, y un número de casillas, comprueba todas las combinaciones de saltos posibles)
+Lista<Lista<Casilla>> caballos(const Lista<Casilla> &lc);
+
+#endif // _LISTAS_
