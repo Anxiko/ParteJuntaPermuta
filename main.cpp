@@ -4,8 +4,15 @@
 
 #include "Listas.hpp"
 
-bool lee_casilla (Casilla &c);
+int lee_casilla (Casilla &c);
 void limpia_teclado();
+
+enum Salida : int
+{
+    LEIDO=0,
+    BLANCO,
+    ERROR
+};
 
 int main()
 {
@@ -16,49 +23,70 @@ int main()
     for (;;)
     {
         //Leer la primera posición
-        std::cout<<"Introduzca la casilla del caballo\n";
-        for (;;)
+        bool leyendo=true;
+        std::cout<<"Introduzca la casilla del caballo, ENTER para finalizar el programa\n";
+        while (leyendo)
         {
             std::cout<<"\nEntrada: ";
-            if (lee_casilla(input))
+            switch (lee_casilla(input))
             {
-                //Problema al leer
-                std::cout<<"\nERROR al leer la entrada inicial, ¿reintentar[S/N]?: ";
-                char rein;
-                std::cin>>rein;
-                if(rein=='n'||rein=='N')
+                case LEIDO:
+                {
+                    entrada=input;
+                    leyendo=false;
+                    break;
+                }
+
+                case BLANCO:
+                {
+                    std::cout<<"Fin del programa\n";
                     return 0;
-            }
-            else
-            {
-                //Se leyo la entrada
-                entrada=input;
-                break;
+                }
+
+                case ERROR:
+                {
+                    //Problema al leer
+                    std::cout<<"\nERROR al leer la entrada inicial\n";
+                    break;
+                }
+
+                default:
+                    break;
             }
         }
 
         //Leer las casillas del tablero
         int val=1;
-        std::cout<<"\nIntroduzca las casillas del teclado, enter para salir\n";
-        for(;;)
+        leyendo=true;
+        std::cout<<"\nIntroduzca las casillas del tablero, ENTER para finalizar\n";
+        while(leyendo)
         {
             std::cout<<'['<<val<<']'<<">: ";
             //Leer una posición
-            if (lee_casilla(input))
+            switch(lee_casilla(input))
             {
-                //Problema al leer
-                std::cout<<"\nERROR al leer la casilla, ¿procesar los datos?[S/N]?: ";
-                char rein;
-                std::cin>>rein;
-                if(!(rein=='n'||rein=='N'))
+                case LEIDO:
+                {
+                    tablero.get().push_back(input);
+                    ++val;
                     break;
-            }
-            else
-            {
-                //Se leyo la entrada
-                tablero.get().push_back(input);
-                ++val;
-                break;
+                }
+
+                case BLANCO:
+                {
+                    leyendo=false;
+                    break;
+                }
+
+                case ERROR:
+                {
+                    //Problema al leer
+                    std::cout<<"\nERROR al leer la casilla\n";
+                    break;
+                }
+
+                default:
+                    break;
             }
         }
 
@@ -78,21 +106,21 @@ void limpia_teclado()
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
-bool lee_casilla (Casilla &c)
+int lee_casilla (Casilla &c)
 {
     int x,y;//Posiciones a leer
     std::string cadena_entrada;
     std::getline(std::cin,cadena_entrada);
     if (cadena_entrada.empty())
-        return false;
+        return BLANCO;
     std::istringstream stream_entrada(cadena_entrada);
     if (stream_entrada>>x>>y)//Intenta leer y comprueba si se produjo algún error
     {
         //No hubo error
         c.set_x(x);
         c.set_y(y);
-        return false;
+        return LEIDO;
     }
     else
-        return true;
+        return ERROR;
 }
