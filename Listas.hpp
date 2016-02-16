@@ -61,7 +61,17 @@ class Lista//Lista de elementos de tipo T
             lista=nlista;
         }
 
-        Lista<T>& operator= (const Lista&) = default;
+        void set(std::vector<T>&& nlista)
+        {
+            lista.swap(nlista);
+        }
+
+        Lista<T>& operator= (const Lista<T>&) = default;
+
+        Lista<T>& operator= (Lista<T> &&nlista)
+        {
+            lista.swap(nlista);
+        }
 
     //Métodos
     public:
@@ -73,11 +83,8 @@ class Lista//Lista de elementos de tipo T
 
             for (unsigned int i=0; i<=lista.size();++i)//Recorre los elementos del vector
             {
-                Lista<T>principio,fin;//Partición de esta lista
-                for (unsigned int i1=0;i1<i;++i1)
-                    principio.lista.push_back(lista[i1]);
-                for (unsigned int i2=i;i2<lista.size();++i2)
-                    fin.lista.push_back(lista[i2]);
+                Lista<T>principio(std::vector<T>(lista.begin(),lista.begin()+i)),
+                fin(std::vector<T>(lista.begin()+i,lista.end()));//Partición de esta lista
                 rv.get().push_back(principio);
                 rv.get().push_back(fin);
             }
@@ -89,8 +96,7 @@ class Lista//Lista de elementos de tipo T
         Lista<T> operator+(Lista<T> nl) const
         {
             Lista<T> rv(*this);//Valor de retorno
-            for (const T& t : nl.get_const())
-                rv.get().push_back(t);
+            rv.get().insert(rv.get().end(),std::make_move_iterator(nl.get().begin()),std::make_move_iterator(nl.get().end()));
             return rv;
         }
 
@@ -110,13 +116,14 @@ class Lista//Lista de elementos de tipo T
             return lista[0];
         }
 
+        Lista<T> head_list() const
+        {
+            return Lista<T>({head()});
+        }
+
         Lista<T> tail() const
         {
-            Lista<T> rv;
-            for (unsigned int i=1;i<lista.size();++i)
-                rv.get().push_back(lista[i]);
-
-            return rv;
+            return Lista<T>(std::vector<T>(lista.begin()+1,lista.end()));
         }
 
         //Permutar
@@ -126,12 +133,13 @@ class Lista//Lista de elementos de tipo T
                 return Lista<Lista<T>>({Lista<T>()});
 
             Lista<Lista<T>> rv;//Valor de retorno
-            Lista<Lista<T>> cola_permutada(tail().permutar());//Obtiene una lista con las permutaciones de la cola
+            Lista<Lista<T>> cola_permutada(std::move(tail().permutar()));//Obtiene una lista con las permutaciones de la cola
             for (const Lista<T>& permutacion_cola : cola_permutada.get_const())//Para cada permutación de la cola
             {
-                Lista<Lista<T>> particion(permutacion_cola.partir());//Obtén su partición
+                Lista<Lista<T>> particion(std::move(permutacion_cola.partir()));//Obtén su partición
+                Lista<T> cabeza(std::move(head_list()));//Cebeza de esta lista
                 for (unsigned int i=0;i+1<particion.get_const().size();i+=2)//Para cada partición, inserta la cabeza en medio y añadela a las soluciones
-                    rv.get().push_back(particion[i]+Lista<T>({head()})+particion[i+1]);
+                    rv.get().push_back(particion[i]+cabeza+particion[i+1]);
             }
 
             return rv;

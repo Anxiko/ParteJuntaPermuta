@@ -8,7 +8,7 @@ std::ostream& operator<<(std::ostream &os, const Casilla& c)
 
 //Funciones auxiliares
 
-//Comprueba si un camino válido es dado
+//Comprueba si un camino dado es válido
 bool valido(const Lista<Casilla>& lc)
 {
     if (lc.get_const().size()<2)
@@ -22,7 +22,7 @@ bool valido(const Lista<Casilla>& lc)
 //Dada la posición de un caballo (primer elemento del array, y un número de casillas, comprueba todas las combinaciones de saltos posibles)
 Lista<Lista<Casilla>> caballos(const Lista<Casilla> &lc)
 {
-    Lista<Casilla> head; head.get().push_back(lc.head());//Obtén la posición del caballo
+    Lista<Casilla> head(std::move(lc.head_list()));//Posición del caballo
     Lista<Lista<Casilla>> rv;//Valor de retorno
 
     const auto& caminos=lc.tail().permutar();//Obtén todos los posibles caminos
