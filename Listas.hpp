@@ -21,10 +21,26 @@ class Lista//Lista de elementos de tipo T
     //Constructor
     public:
 
-        Lista() = default;
+        Lista() = default;//Defecto
 
-        Lista(const std::vector<T> nlista)
-        :lista(nlista)
+        //Vector
+
+        Lista(const std::vector<T>& nvect)//Copia
+        :lista(nvect)
+        {}
+
+        Lista(std::vector<T>&& nvect)//Mover
+        :lista(nvect)
+        {}
+
+        //Lista
+
+        Lista(const Lista<T>& nlista)//Copia
+        :lista(nlista.lista)
+        {}
+
+        Lista(Lista<T>&& nlista)//Mover
+        :lista(nlista.lista)
         {}
 
     //Get/Set
