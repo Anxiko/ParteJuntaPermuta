@@ -6,8 +6,10 @@
 
 int lee_casilla (Casilla &c);//Lee una casilla del teclado
 int lee_entero(int &i);//Lee un entero del teclado
-void opc_caballos();//Problema de los caballos
+void opc_caballos();//Problema del caballo
 void opc_juntar();//Junta un par de listas
+void opc_partir();//Calcula todas las posibles particiones de la lista en dos
+void opc_permutar();//Calcula las permutaciones de una lista
 
 enum Salida : int
 {
@@ -18,7 +20,71 @@ enum Salida : int
 
 int main()
 {
-    opc_juntar();
+    int opc;//Opción escogida en el menú
+
+    while(true)
+    {
+        std::cout<<"\n\nOpciones\n\n";
+        std::cout<<"1\tJuntar\n";
+        std::cout<<"2\tPartir\n";
+        std::cout<<"3\tPermutar\n";
+        std::cout<<"4\tCaballos\n";
+        std::cout<<"5\tSalir\n";
+        std::cout<<"Opc: ";
+
+        switch(lee_entero(opc))
+        {
+            case LEIDO:
+            {
+                switch (opc)
+                {
+                    case 1:
+                    {
+                        opc_juntar();
+                        break;
+                    }
+
+                    case 2:
+                    {
+                        opc_partir();
+                        break;
+                    }
+
+                    case 3:
+                    {
+                        opc_permutar();
+                        break;
+                    }
+
+                    case 4:
+                    {
+                        opc_caballos();
+                        break;
+                    }
+
+                    case 5:
+                    {
+                        std::cout<<"Fin del programa\n";
+                        return 0;
+                    }
+
+                    default:
+                    {
+                        std::cout<<"ERROR: valor no reconocido\n";
+                    }
+                }
+
+                break;
+            }
+            case BLANCO:
+            case ERROR:
+            {
+                std::cout<<"ERROR: al leer el valor\n";
+                break;
+            }
+        }
+    }
+
     return 0;
 }
 
@@ -36,7 +102,7 @@ void opc_juntar()
         int i;//Entero leido
         while(leyendo)
         {
-            std::cout<<'['<<n_leidos<<"]>";
+            std::cout<<'['<<(n_leidos+1)<<"]>";
             switch(lee_entero(i))
             {
                 case LEIDO:
@@ -54,14 +120,95 @@ void opc_juntar()
                 }
                 case ERROR:
                 {
-                    std::cout<<"ERROR al leer el entero";
+                    std::cout<<"ERROR al leer el entero\n";
                     break;
                 }
             }
         }
     }
 
-    std::cout<<"Listas unidas:\n"<<(listas[0]+listas[1]);
+    std::cout<<"Listas unidas:\n"<<(listas[0]+listas[1])<<'\n';
+}
+
+void opc_partir()
+{
+    Lista<int> lista;
+    std::cout<<"Introduzca una lista para partirla\n";
+    std::cout<<"Introduzca enteros de 1 en 1, ENTER para terminar la lista\n";
+
+    int n_leidos=0;//Cantidad de números leidos
+    bool leyendo=true;
+    int i;//Entero leido
+    while(leyendo)
+    {
+        std::cout<<'['<<(n_leidos+1)<<"]>";
+        switch(lee_entero(i))
+        {
+            case LEIDO:
+            {
+                ++n_leidos;
+                lista.get().push_back(i);
+                break;
+            }
+
+            case BLANCO:
+            {
+                std::cout<<"Leidos "<<n_leidos<<'\n';
+                leyendo=false;
+                break;
+            }
+            case ERROR:
+            {
+                std::cout<<"ERROR al leer el entero\n";
+                break;
+            }
+        }
+    }
+
+    std::cout<<"Particiones de la lista:\n";
+    const Lista<Lista<int>> part(std::move(lista.partir()));
+    for (unsigned int cnt=0;cnt<part.get_const().size()-1;cnt+=2)
+    {
+        std::cout<<'['<<((cnt/2)+1)<<"] "<<part[cnt]<<" + "<<part[cnt+1]<<'\n';
+    }
+}
+
+void opc_permutar()
+{
+    Lista<int> lista;
+    std::cout<<"Introduzca una lista para permutarla\n";
+    std::cout<<"Introduzca enteros de 1 en 1, ENTER para terminar la lista\n";
+
+    int n_leidos=0;//Cantidad de números leidos
+    bool leyendo=true;
+    int i;//Entero leido
+    while(leyendo)
+    {
+        std::cout<<'['<<(n_leidos+1)<<"]>";
+        switch(lee_entero(i))
+        {
+            case LEIDO:
+            {
+                ++n_leidos;
+                lista.get().push_back(i);
+                break;
+            }
+
+            case BLANCO:
+            {
+                std::cout<<"Leidos "<<n_leidos<<'\n';
+                leyendo=false;
+                break;
+            }
+            case ERROR:
+            {
+                std::cout<<"ERROR al leer el entero\n";
+                break;
+            }
+        }
+    }
+
+    std::cout<<"Permutaciones de la lista:\n"<<lista.permutar()<<'\n';
 }
 
 void opc_caballos()
@@ -70,82 +217,79 @@ void opc_caballos()
     Casilla entrada;
     Lista<Casilla> tablero;
 
-    for (;;)
+    //Leer la primera posición
+    bool leyendo=true;
+    std::cout<<"Introduzca la casilla del caballo, ENTER para finalizar el programa\n";
+    while (leyendo)
     {
-        //Leer la primera posición
-        bool leyendo=true;
-        std::cout<<"Introduzca la casilla del caballo, ENTER para finalizar el programa\n";
-        while (leyendo)
+        std::cout<<"\nEntrada: ";
+        switch (lee_casilla(input))
         {
-            std::cout<<"\nEntrada: ";
-            switch (lee_casilla(input))
+            case LEIDO:
             {
-                case LEIDO:
-                {
-                    entrada=input;
-                    leyendo=false;
-                    break;
-                }
-
-                case BLANCO:
-                {
-                    std::cout<<"Fin del programa\n";
-                    return;
-                }
-
-                case ERROR:
-                {
-                    //Problema al leer
-                    std::cout<<"\nERROR al leer la entrada inicial\n";
-                    break;
-                }
-
-                default:
-                    break;
+                entrada=input;
+                leyendo=false;
+                break;
             }
-        }
 
-        //Leer las casillas del tablero
-        int val=1;
-        leyendo=true;
-        std::cout<<"\nIntroduzca las casillas del tablero, ENTER para finalizar\n";
-        while(leyendo)
-        {
-            std::cout<<'['<<val<<']'<<">: ";
-            //Leer una posición
-            switch(lee_casilla(input))
+            case BLANCO:
             {
-                case LEIDO:
-                {
-                    tablero.get().push_back(input);
-                    ++val;
-                    break;
-                }
-
-                case BLANCO:
-                {
-                    leyendo=false;
-                    break;
-                }
-
-                case ERROR:
-                {
-                    //Problema al leer
-                    std::cout<<"\nERROR al leer la casilla\n";
-                    break;
-                }
-
-                default:
-                    break;
+                std::cout<<"Fin del programa\n";
+                return;
             }
-        }
 
-        std::cout<<"\nDatos\n";
-        std::cout<<"Caballo: "<<entrada<<'\n';
-        std::cout<<"Tablero: \n"<<tablero<<'\n';
-        std::cout<<"Salida:\n";
-        std::cout<<caballos(Lista<Casilla>({entrada})+tablero)<<"\n";
+            case ERROR:
+            {
+                //Problema al leer
+                std::cout<<"\nERROR al leer la entrada inicial\n";
+                break;
+            }
+
+            default:
+                break;
+        }
     }
+
+    //Leer las casillas del tablero
+    int val=1;
+    leyendo=true;
+    std::cout<<"\nIntroduzca las casillas del tablero, ENTER para finalizar\n";
+    while(leyendo)
+    {
+        std::cout<<'['<<val<<']'<<">: ";
+        //Leer una posición
+        switch(lee_casilla(input))
+        {
+            case LEIDO:
+            {
+                tablero.get().push_back(input);
+                ++val;
+                break;
+            }
+
+            case BLANCO:
+            {
+                leyendo=false;
+                break;
+            }
+
+            case ERROR:
+            {
+                //Problema al leer
+                std::cout<<"\nERROR al leer la casilla\n";
+                break;
+            }
+
+            default:
+                break;
+        }
+    }
+
+    std::cout<<"\nDatos\n";
+    std::cout<<"Caballo: "<<entrada<<'\n';
+    std::cout<<"Tablero: \n"<<tablero<<'\n';
+    std::cout<<"Salida:\n";
+    std::cout<<caballos(Lista<Casilla>({entrada})+tablero)<<"\n";
 }
 
 void limpia_teclado()
