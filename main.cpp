@@ -5,7 +5,9 @@
 #include "Listas.hpp"
 
 int lee_casilla (Casilla &c);//Lee una casilla del teclado
+int lee_entero(int &i);//Lee un entero del teclado
 void opc_caballos();//Problema de los caballos
+void opc_juntar();//Junta un par de listas
 
 enum Salida : int
 {
@@ -13,6 +15,12 @@ enum Salida : int
     BLANCO,
     ERROR
 };
+
+int main()
+{
+    opc_juntar();
+    return 0;
+}
 
 void opc_juntar()
 {
@@ -28,16 +36,32 @@ void opc_juntar()
         int i;//Entero leido
         while(leyendo)
         {
+            std::cout<<'['<<n_leidos<<"]>";
             switch(lee_entero(i))
             {
                 case LEIDO:
                 {
+                    ++n_leidos;
                     listas[cnt].get().push_back(i);
+                    break;
+                }
+
+                case BLANCO:
+                {
+                    std::cout<<"Leidos "<<n_leidos<<" en lista "<<(cnt+1)<<'\n';
+                    leyendo=false;
+                    break;
+                }
+                case ERROR:
+                {
+                    std::cout<<"ERROR al leer el entero";
                     break;
                 }
             }
         }
     }
+
+    std::cout<<"Listas unidas:\n"<<(listas[0]+listas[1]);
 }
 
 void opc_caballos()
@@ -66,7 +90,7 @@ void opc_caballos()
                 case BLANCO:
                 {
                     std::cout<<"Fin del programa\n";
-                    return 0;
+                    return;
                 }
 
                 case ERROR:
